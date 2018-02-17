@@ -2556,8 +2556,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
  * Ionic pages and navigation.
  */
 var RegistrosociaPage = (function () {
-    function RegistrosociaPage(http, _categoria, formBuilder, navCtrl, navParams) {
+    function RegistrosociaPage(alertCtrl, http, _categoria, formBuilder, navCtrl, navParams) {
         var _this = this;
+        this.alertCtrl = alertCtrl;
         this.http = http;
         this._categoria = _categoria;
         this.formBuilder = formBuilder;
@@ -2568,12 +2569,21 @@ var RegistrosociaPage = (function () {
         this.todo = this.formBuilder.group({
             email: ['', __WEBPACK_IMPORTED_MODULE_3__angular_forms__["f" /* Validators */].required],
             nombre: [''],
+            apellido: [''],
             password: [''],
             telefono: [''],
-            direccion: ['']
+            direccion: [''],
+            referencia: [''],
+            cuenta: [''],
+            distrito: [''],
+            horario: [''],
+            experiencia: [''],
+            comentario: ['']
         });
         this._categoria.getcategorias()
             .subscribe(function (data) { return _this.categoria = data; });
+        this._categoria.getdistrito()
+            .subscribe(function (data) { return _this.distrito = data; });
     }
     RegistrosociaPage.prototype.ionViewDidLoad = function () {
         console.log('ionViewDidLoad RegistrosociaPage');
@@ -2589,20 +2599,30 @@ var RegistrosociaPage = (function () {
         }
     };
     RegistrosociaPage.prototype.enviasocia = function (data) {
+        var _this = this;
+        console.log('recibe..', data);
         var creds = JSON.stringify({ categoria: this.pedido, socia: data });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["RequestOptions"]({
             headers: new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]({ 'Content-Type': 'application/json' })
         });
         this.http.post('http://104.236.247.3:8000/nuevasocia/', creds, options)
             .subscribe(function (data) {
+            if (data['_body'] == 0) {
+                var alert_1 = _this.alertCtrl.create({
+                    title: 'My Look Xpress',
+                    subTitle: 'Este correo ya existe, porfavor escoja otro',
+                    buttons: ['OK']
+                });
+                alert_1.present();
+            }
         });
     };
     RegistrosociaPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-            selector: 'page-registrosocia',template:/*ion-inline-start:"/home/joel/socia/src/pages/registrosocia/registrosocia.html"*/'<!--\n  Generated template for the RegistrosociaPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n  <ion-navbar>\n    <ion-title>Conviertete en Socia</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n <form (ngSubmit)="enviasocia(user)" [formGroup]="todo">\n\n \n\n      <ion-item>\n            <ion-input placeholder="Nombre" formControlName="nombre"  name=\'nombre\' id="loginField" type="text" required [(ngModel)] = "user.nombre"></ion-input>\n      </ion-item>\n\n \n      <ion-item>\n            <ion-input placeholder="Email"  formControlName="email"  name=\'email\' id="loginField" type="eaail" required [(ngModel)] = "user.email"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Telefono"  formControlName="telefono"  name=\'telefono\' id="loginField" type="number" required [(ngModel)] = "user.telefono"></ion-input>\n      </ion-item>\n\n\n       <ion-item>\n            <ion-input placeholder="Direccion"  formControlName="direccion"  name=\'direccion\' id="loginField" type="text" required [(ngModel)] = "user.direccion"></ion-input>\n      </ion-item>\n\n\n       <ion-item>\n            <ion-input placeholder="Referencia"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.referencia"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Numero De cuenta"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.numerocuenta"></ion-input>\n      </ion-item>\n\n\n      <ion-item>\n            <ion-input placeholder="Distrito"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.distrito"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Horario"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.horarios"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Experiencia Laboral Min 1 año"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.experiencia"></ion-input>\n      </ion-item>\n\n \n<!-- \n      <ion-item>\n            <ion-input placeholder="Compartir de imagenes de trabajos realizados"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.compartir"></ion-input>\n      </ion-item> -->\n\n          <ion-item>\n      <ion-textarea placeholder="Comentanos sobre tu experiencia laboral"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.experiencia"></ion-textarea>\n      </ion-item>\n\n\n            <ion-item>\n            <ion-input placeholder="Terminos y Condiciones"  formControlName="direccion"   id="loginField" type="text" required [(ngModel)] = "user.terminos"></ion-input>\n      </ion-item>\n\n\n\n\n\n     \n\n\n\n    <!--    <ion-item ion-item *ngFor="let item of categoria">\n\n\n\n       {{item.nombre}} \n\n\n     <ion-icon style=\'float:right;font-size: 27px;\' *ngIf="!item.check" name="ios-checkmark-circle-outline"  (click)=\'agregacarrito(item);item.check=true\'></ion-icon>\n     <ion-icon  style=\'float:right;font-size: 27px;\' *ngIf="item.check" name="ios-checkmark-circle"  (click)=\'quitacarrito(item);item.check=false\'></ion-icon> \n\n      <p [hidden]="!item.muestradescripcion"  class=\'detallesubcategoria\'> {{item.descripcion}}</p>\n\n\n\n  </ion-item>\n -->\n     \n    \n\n<!--       <ion-item>\n            <ion-input placeholder="Telefono" formControlName="password" name="password" id="loginField" type="text" required [(ngModel)] = "user.password"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Telefono" formControlName="password" name="password" id="loginField" type="text" required [(ngModel)] = "user.password"></ion-input>\n      </ion-item>\n\n -->\n\n\n\n      <button round ion-button type="submit" color=\'dark\' block [disabled]="!todo.valid">Enviar</button>\n    </form>\n\n\n\n</ion-content>\n'/*ion-inline-end:"/home/joel/socia/src/pages/registrosocia/registrosocia.html"*/,
+            selector: 'page-registrosocia',template:/*ion-inline-start:"/home/joel/socia/src/pages/registrosocia/registrosocia.html"*/'<!--\n  Generated template for the RegistrosociaPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n  <ion-navbar>\n    <ion-title>Inscripcion</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n <form (ngSubmit)="enviasocia(user)" [formGroup]="todo">\n\n \n      \n      <ion-item>\n              <ion-label>Nombre</ion-label>\n            <ion-input formControlName="nombre"  name=\'nombre\' id="loginField" type="text"  [(ngModel)] = "user.nombre"></ion-input>\n      </ion-item>\n\n\n       <ion-item>\n            <ion-label>Apellido</ion-label>\n            <ion-input formControlName="apellido"  name=\'apellido\' id="loginField" type="text"  [(ngModel)] = "user.apellido"></ion-input>\n      </ion-item>\n\n\n \n      <ion-item>\n            <ion-label>Email</ion-label>\n            <ion-input  formControlName="email"  name=\'email\' id="loginField" type="email"  [(ngModel)] = "user.email"></ion-input>\n      </ion-item>\n\n      <ion-item>\n\n            <ion-label>Telefono</ion-label>\n            <ion-input  formControlName="telefono"  name=\'telefono\' id="loginField" type="number"  [(ngModel)] = "user.telefono"></ion-input>\n      </ion-item>\n\n\n       <ion-item>\n            <ion-label>Direccion</ion-label>\n            <ion-input  formControlName="direccion"  name=\'direccion\' id="loginField" type="text"  [(ngModel)] = "user.direccion"></ion-input>\n      </ion-item>\n\n\n       <ion-item>\n            <ion-label>Referencia</ion-label>\n            <ion-input  formControlName="referencia" name=\'referencia\'  id="loginField" type="text"  [(ngModel)] = "user.referencia"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-label>No Cuenta</ion-label>\n            <ion-input   formControlName="cuenta"  name=\'cuenta\'   id="loginField" type="text"  [(ngModel)] = "user.cuenta"></ion-input>\n      </ion-item>\n\n<!-- \n      <ion-item>\n            <ion-input placeholder="Distrito"  formControlName="distrito"   id="loginField" type="text"  name=\'distrito\'  [(ngModel)] = "user.distrito"></ion-input>\n      </ion-item> -->\n\n\n      <ion-item>\n      <ion-label>Distrito</ion-label>\n      <ion-select  formControlName="distrito"   id="loginField" type="text"  name=\'distrito\'  [(ngModel)] = "user.distrito">\n      <ion-option *ngFor="let d of distrito" [value]="d">{{d.nombre}}</ion-option>\n\n      </ion-select>\n      </ion-item>\n\n\n      <ion-item>\n\n            <ion-label>Horario</ion-label>\n            <ion-input   formControlName="horario"   id="loginField" type="text" name=\'horario\'   [(ngModel)] = "user.horario"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-label>Experiencia</ion-label>\n            <ion-input  formControlName="experiencia" name=\'experiencia\'  id="loginField" type="text"  [(ngModel)] = "user.experiencia"></ion-input>\n      </ion-item>\n\n \n<!-- \n      <ion-item>\n            <ion-input placeholder="Compartir de imagenes de trabajos realizados"  formControlName="direccion"   id="loginField" type="text"  [(ngModel)] = "user.compartir"></ion-input>\n      </ion-item> -->\n\n      <ion-item>\n      <ion-label>Comentario</ion-label>\n      <ion-textarea  name=\'comentario\' formControlName="comentario"   id="loginField" type="text"  [(ngModel)] = "user.comentario"></ion-textarea>\n      </ion-item>\n\n\n           <!--  <ion-item>\n            <ion-input placeholder="Terminos y Condiciones"  formControlName="direccion"   id="loginField" type="text"  [(ngModel)] = "user.terminos"></ion-input>\n      </ion-item> -->\n\n\n\n\n\n     \n\n\n\n    <!--    <ion-item ion-item *ngFor="let item of categoria">\n\n\n\n       {{item.nombre}} \n\n\n     <ion-icon style=\'float:right;font-size: 27px;\' *ngIf="!item.check" name="ios-checkmark-circle-outline"  (click)=\'agregacarrito(item);item.check=true\'></ion-icon>\n     <ion-icon  style=\'float:right;font-size: 27px;\' *ngIf="item.check" name="ios-checkmark-circle"  (click)=\'quitacarrito(item);item.check=false\'></ion-icon> \n\n      <p [hidden]="!item.muestradescripcion"  class=\'detallesubcategoria\'> {{item.descripcion}}</p>\n\n\n\n  </ion-item>\n -->\n     \n    \n\n<!--       <ion-item>\n            <ion-input placeholder="Telefono" formControlName="password" name="password" id="loginField" type="text"  [(ngModel)] = "user.password"></ion-input>\n      </ion-item>\n\n      <ion-item>\n            <ion-input placeholder="Telefono" formControlName="password" name="password" id="loginField" type="text"  [(ngModel)] = "user.password"></ion-input>\n      </ion-item>\n\n -->\n\n\n\n      <button round ion-button type="submit" color=\'dark\' block [disabled]="!todo.valid">Enviar</button>\n    </form>\n\n\n\n</ion-content>\n'/*ion-inline-end:"/home/joel/socia/src/pages/registrosocia/registrosocia.html"*/,
             providers: [__WEBPACK_IMPORTED_MODULE_4__providers_categorias_categorias__["a" /* CategoriasProvider */]]
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"], __WEBPACK_IMPORTED_MODULE_4__providers_categorias_categorias__["a" /* CategoriasProvider */], __WEBPACK_IMPORTED_MODULE_3__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */]])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"], __WEBPACK_IMPORTED_MODULE_4__providers_categorias_categorias__["a" /* CategoriasProvider */], __WEBPACK_IMPORTED_MODULE_3__angular_forms__["a" /* FormBuilder */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */]])
     ], RegistrosociaPage);
     return RegistrosociaPage;
 }());
@@ -3125,6 +3145,10 @@ var CategoriasProvider = (function () {
     };
     CategoriasProvider.prototype.getsubcategorias = function (categoria) {
         return this._http.get('http://104.236.247.3:8000/subcategoria/' + categoria)
+            .map(function (response) { return response.json(); });
+    };
+    CategoriasProvider.prototype.getdistrito = function () {
+        return this._http.get('http://104.236.247.3:8000/distritos/')
             .map(function (response) { return response.json(); });
     };
     CategoriasProvider = __decorate([

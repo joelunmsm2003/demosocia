@@ -3933,8 +3933,8 @@ ion-title {
 .slides {
   font-size: 20px;
   color: #fff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#030006), to(#a146f1));
-  background: linear-gradient(to bottom, #030006, #a146f1);
+  background: -webkit-gradient(linear, left top, left bottom, from(#55505a), to(#d9d6dc));
+  background: linear-gradient(to bottom, #55505a, #d9d6dc);
   line-height: 30px;
   word-spacing: 4px;
   padding: 25px !important;
